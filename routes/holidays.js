@@ -1,4 +1,5 @@
 const express = require("express");
+const Joi = require("joi");
 const router = express.Router();
 const Holiday = require("../models/Holiday");
 
@@ -8,15 +9,13 @@ async function getHolidays() {
   return holidays;
 }
 
-async function createHoliday(tempHoliday) {
-  const holiday = new Holiday(tempHoliday);
+async function createHoliday(hol) {
+  const holiday = new Holiday(hol);
 
   try {
     const result = await holiday.save();
-    console.log("*** Result: ", result);
     return result;
   } catch (err) {
-    console.log(err.message);
     return err.message;
   }
 }
@@ -28,9 +27,20 @@ router.get("/", (req, res) => {
 });
 
 router.post("/", (req, res) => {
+  const { error } = validateHoliday(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
   createHoliday(req.body)
     .then((response) => res.send(response))
     .catch((err) => res.send(err));
 });
+
+const validateHoliday = (holiday) => {
+  const schema = Joi.object({
+    name: Joi.string().min(3).required(),
+    date: Joi.date().required(),
+  });
+
+  return schema.validate(holiday);
+};
 
 module.exports = router;

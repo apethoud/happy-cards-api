@@ -7,7 +7,6 @@ dotenv.config();
 const dayjs = require("dayjs");
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT;
-const Holiday = require("./models/Holiday");
 const holidays = require("./routes/holidays");
 const app = express();
 
