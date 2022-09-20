@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Joi = require("joi");
+const _ = require("lodash");
 const User = require("../models/User");
 
 async function createUser(usr) {
@@ -18,11 +19,13 @@ router.post("/", async (req, res) => {
   const { error } = validateUser(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  let user = await User.findOne({ email: req.body.email });
+  let user = await User.findOne(_.pick(req.body, ["email"]));
   if (user) res.status(400).send("User already registered.");
 
-  createUser(req.body)
-    .then((response) => res.send(response))
+  user = _.pick(req.body, ["name", "email", "password"]);
+
+  createUser(user)
+    .then((response) => res.send(_.pick(response, ["_id", "name", "email"])))
     .catch((err) => res.send(err));
 });
 
