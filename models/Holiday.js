@@ -5,6 +5,8 @@ const Holiday = mongoose.model(
   new mongoose.Schema({
     name: {
       type: String,
+      minlength: 5,
+      maxlength: 200,
       required: true,
     },
     date: {
