@@ -2,6 +2,7 @@ const express = require("express");
 const Joi = require("joi");
 const _ = require("lodash");
 const router = express.Router();
+const auth = require("../middleware/auth");
 const Holiday = require("../models/Holiday");
 
 async function getHolidays() {
@@ -27,7 +28,7 @@ router.get("/", (req, res) => {
     .catch((err) => res.send(err));
 });
 
-router.post("/", async (req, res) => {
+router.post("/", auth, async (req, res) => {
   const { error } = validateHoliday(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
