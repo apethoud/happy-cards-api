@@ -4,6 +4,7 @@ const Joi = require("joi");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const auth = require("../middleware/auth");
 
 async function createUser(usr) {
   const user = new User(usr);
@@ -15,6 +16,11 @@ async function createUser(usr) {
     return err.message;
   }
 }
+
+router.get("/me", auth, async (req, res) => {
+  const user = await User.findById(req.user._id).select("-password");
+  res.send(user);
+});
 
 router.post("/", async (req, res) => {
   const { error } = validateUser(req.body);
