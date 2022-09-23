@@ -30,9 +30,7 @@ router.post("/", async (req, res) => {
   createUser(user)
     .then((response) => {
       const token = user.generateAuthToken();
-      res
-        .header("x-auth-token", token)
-        .send(_.pick(response, ["_id", "name", "email"]));
+      res.send(_.pick(response, ["_id", "name", "email"]));
     })
     .catch((err) => res.send(err));
 });
