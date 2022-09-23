@@ -7,7 +7,6 @@ const Holiday = require("../models/Holiday");
 
 async function getHolidays() {
   const holidays = await Holiday.find({});
-  console.log(holidays);
   return holidays;
 }
 
@@ -33,7 +32,7 @@ router.post("/", auth, async (req, res) => {
   if (error) return res.status(400).send(error.details[0].message);
 
   let user = await Holiday.findOne(_.pick(req.body, ["name"]));
-  if (user) res.status(400).send("Holiday already exists.");
+  if (user) return res.status(400).send("Holiday already exists.");
 
   createHoliday(_.pick(req.body, ["name", "date"]))
     .then((response) => res.send(response))
