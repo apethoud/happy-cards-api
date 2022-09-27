@@ -4,12 +4,14 @@ const Joi = require("joi");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const asyncMiddleware = require("../middleware/async");
 
-router.post("/", async (req, res, next) => {
-  const { error } = validate(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+router.post(
+  "/",
+  asyncMiddleware(async (req, res, next) => {
+    const { error } = validate(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
-  try {
     let user = await User.findOne(_.pick(req.body, ["email"]));
     if (!user) res.status(400).send("Invalid email or password.");
 
@@ -21,10 +23,8 @@ router.post("/", async (req, res, next) => {
 
     const token = user.generateAuthToken();
     res.send(token);
-  } catch (err) {
-    next(err);
-  }
-});
+  })
+);
 
 const validate = (req) => {
   const schema = Joi.object({
