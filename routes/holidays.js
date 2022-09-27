@@ -27,16 +27,20 @@ router.get("/", (req, res) => {
     .catch((err) => res.send(err));
 });
 
-router.post("/", auth, async (req, res) => {
+router.post("/", auth, async (req, res, next) => {
   const { error } = validateHoliday(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  let user = await Holiday.findOne(_.pick(req.body, ["name"]));
-  if (user) return res.status(400).send("Holiday already exists.");
+  try {
+    let user = await Holiday.findOne(_.pick(req.body, ["name"]));
+    if (user) return res.status(400).send("Holiday already exists.");
 
-  createHoliday(_.pick(req.body, ["name", "date"]))
-    .then((response) => res.send(response))
-    .catch((err) => res.send(err));
+    createHoliday(_.pick(req.body, ["name", "date"]))
+      .then((response) => res.send(response))
+      .catch((err) => res.send(err));
+  } catch (err) {
+    next(err);
+  }
 });
 
 const validateHoliday = (holiday) => {

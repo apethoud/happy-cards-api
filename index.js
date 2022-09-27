@@ -20,6 +20,10 @@ app.use("/api/users", users);
 app.use("/api/auth", auth);
 app.use(morgan("tiny"));
 
+app.use(function (err, req, res, next) {
+  res.status(500).send("Something went wrong.");
+});
+
 if (!JWTSECRET) {
   console.log("FATAL ERROR: JWTSECRET is not defined.");
   process.exit(1);
