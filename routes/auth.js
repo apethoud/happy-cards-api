@@ -4,27 +4,20 @@ const Joi = require("joi");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
-const asyncMiddleware = require("../middleware/async");
 
-router.post(
-  "/",
-  asyncMiddleware(async (req, res, next) => {
-    const { error } = validate(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+router.post("/", async (req, res, next) => {
+  const { error } = validate(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
 
-    let user = await User.findOne(_.pick(req.body, ["email"]));
-    if (!user) res.status(400).send("Invalid email or password.");
+  let user = await User.findOne(_.pick(req.body, ["email"]));
+  if (!user) res.status(400).send("Invalid email or password.");
 
-    const validPassword = await bcrypt.compare(
-      req.body.password,
-      user.password
-    );
-    if (!validPassword) res.status(400).send("Invalid email or password.");
+  const validPassword = await bcrypt.compare(req.body.password, user.password);
+  if (!validPassword) res.status(400).send("Invalid email or password.");
 
-    const token = user.generateAuthToken();
-    res.send(token);
-  })
-);
+  const token = user.generateAuthToken();
+  res.send(token);
+});
 
 const validate = (req) => {
   const schema = Joi.object({
