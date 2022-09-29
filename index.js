@@ -22,6 +22,10 @@ const errorHandler = require("./middleware/error");
 
 const app = express();
 
+process.on("uncaughtException", (ex) => {
+  winston.error(ex.message, ex);
+});
+
 app.use(express.json());
 app.use(helmet());
 app.use("/api/holidays", holidays);
