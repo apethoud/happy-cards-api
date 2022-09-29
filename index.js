@@ -1,18 +1,25 @@
-require("express-async-errors");
 const express = require("express");
+require("express-async-errors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
-dotenv.config();
 const dayjs = require("dayjs");
+const winston = require("winston");
+require("winston-mongodb");
+
+dotenv.config();
 const MONGO_URI = process.env.MONGO_URI;
 const PORT = process.env.PORT;
 const JWTSECRET = process.env.JWTSECRET;
+
+winston.add(winston.transports.MongoDB, { db: MONGO_URI, level: "info" });
+
 const holidays = require("./routes/holidays");
 const users = require("./routes/users");
 const auth = require("./routes/auth");
 const errorHandler = require("./middleware/error");
+
 const app = express();
 
 app.use(express.json());
