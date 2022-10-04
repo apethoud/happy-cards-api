@@ -24,6 +24,15 @@ const app = express();
 
 process.on("uncaughtException", (ex) => {
   winston.error(ex.message, ex);
+  process.exit(1);
+});
+
+winston.handleExceptions(
+  new winston.transports.File({ filename: "uncaughtExceptions.log" })
+);
+
+process.on("unhandledRejection", (ex) => {
+  throw ex;
 });
 
 app.use(express.json());
