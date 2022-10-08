@@ -10,6 +10,7 @@ require("./startup/logging")();
 require("./startup/routes")(app);
 require("./startup/db")();
 require("./startup/config")();
+require("./startup/prod")(app);
 
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}...`);
