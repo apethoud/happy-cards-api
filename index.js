@@ -6,7 +6,11 @@ const PORT = process.env.PORT;
 
 const app = express();
 
-require("./startup/logging")();
+app.get("/", (req, res) => {
+  res.send("Hello World!");
+});
+
+// require("./startup/logging")();
 require("./startup/routes")(app);
 require("./startup/db")();
 require("./startup/config")();
